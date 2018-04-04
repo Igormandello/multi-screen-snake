@@ -1,6 +1,6 @@
-﻿namespace server
+﻿namespace client
 {
-    partial class Server
+    partial class Form1
     {
         /// <summary>
         /// Variável de designer necessária.
@@ -79,6 +79,7 @@
             this.btnCon.TabIndex = 5;
             this.btnCon.Text = "Connect";
             this.btnCon.UseVisualStyleBackColor = true;
+            this.btnCon.Click += new System.EventHandler(this.btnCon_Click);
             // 
             // Server
             // 

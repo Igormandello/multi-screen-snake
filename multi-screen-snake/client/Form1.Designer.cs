@@ -1,4 +1,4 @@
-﻿namespace client
+﻿namespace server
 {
     partial class Form1
     {
@@ -58,6 +58,7 @@
             this.btnStart.TabIndex = 2;
             this.btnStart.Text = "Start";
             this.btnStart.UseVisualStyleBackColor = true;
+            this.btnStart.Click += new System.EventHandler(this.StartClick);
             // 
             // Form1
             // 
