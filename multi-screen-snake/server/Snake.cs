@@ -26,6 +26,15 @@ namespace server
             this.Scale = new Size(scaleX, scaleY);
         }
 
+        public void Render(Graphics g)
+        {
+            g.FillRectangle(Brushes.Black, new Rectangle(Head.X * this.Scale.Width, Head.Y * this.Scale.Height, this.Scale.Width, this.Scale.Height));
+            foreach (Point p in Tail)
+                g.FillRectangle(Brushes.Black, new Rectangle(p.X * this.Scale.Width, p.Y * this.Scale.Height, this.Scale.Width, this.Scale.Height));
+
+            g.Flush();
+        }
+
         public void EatFruit()
         {
             Point last = Tail[Tail.Count - 1];

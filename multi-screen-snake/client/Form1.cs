@@ -74,15 +74,12 @@ namespace client
                     continue;
                 }
                 else
-                    while (message != "END")
-                    {
-                        String[] props = message.Split(',');
-                        Rectangle r = new Rectangle(Convert.ToInt32(props[0]), Convert.ToInt32(props[1]), Convert.ToInt32(props[2]), Convert.ToInt32(props[3]));
+                {
+                    String[] props = message.Split(',');
+                    Rectangle r = new Rectangle(Convert.ToInt32(props[0]), Convert.ToInt32(props[1]), Convert.ToInt32(props[2]), Convert.ToInt32(props[3]));
 
-                        g.FillRectangle(Brushes.Black, r);
-
-                        message = reader.ReadLine();
-                    }
+                    g.FillRectangle(Brushes.Black, r);
+                }
             }
         }
     }
