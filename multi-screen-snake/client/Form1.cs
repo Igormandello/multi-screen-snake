@@ -73,12 +73,32 @@ namespace client
                     g.Clear(this.TransparencyKey);
                     continue;
                 }
-                else
+                else if (message == "FRUIT")
                 {
+                    message = reader.ReadLine();
+
                     String[] props = message.Split(',');
                     Rectangle r = new Rectangle(Convert.ToInt32(props[0]), Convert.ToInt32(props[1]), Convert.ToInt32(props[2]), Convert.ToInt32(props[3]));
 
-                    g.FillRectangle(Brushes.Black, r);
+                    g.FillRectangle(Brushes.Red, r);
+                }
+                else if (message == "BODY")
+                {
+                    List<Rectangle> toDraw = new List<Rectangle>();
+
+                    message = reader.ReadLine();
+                    while (message != "END")
+                    {
+                        String[] props = message.Split(',');
+                        Rectangle r = new Rectangle(Convert.ToInt32(props[0]), Convert.ToInt32(props[1]), Convert.ToInt32(props[2]), Convert.ToInt32(props[3]));
+
+                        toDraw.Add(r);
+
+                        message = reader.ReadLine();
+                    }
+
+                    foreach (Rectangle r in toDraw)
+                        g.FillRectangle(Brushes.Black, r);
                 }
             }
         }

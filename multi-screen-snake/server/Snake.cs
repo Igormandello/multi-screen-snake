@@ -16,6 +16,7 @@ namespace server
         public List<Point> Tail { get; private set; }
         public Size Scale { get; set; }
         public Point Head { get; private set; }
+        public Point Fruit { get; private set; }
 
         public Snake(int x, int y, int scaleX, int scaleY)
         {
@@ -24,6 +25,8 @@ namespace server
 
             Tail.Add(new Point(Head.X, Head.Y));
             this.Scale = new Size(scaleX, scaleY);
+
+            SortFruit();
         }
 
         public void Render(Graphics g)
@@ -33,12 +36,6 @@ namespace server
                 g.FillRectangle(Brushes.Black, new Rectangle(p.X * this.Scale.Width, p.Y * this.Scale.Height, this.Scale.Width, this.Scale.Height));
 
             g.Flush();
-        }
-
-        public void EatFruit()
-        {
-            Point last = Tail[Tail.Count - 1];
-            Tail.Add(new Point(last.X, last.Y));
         }
 
         public bool Update(xDirection xd, yDirection yd)
@@ -62,6 +59,12 @@ namespace server
                 if (p.Equals(Head))
                     return false;
 
+            if (Head.Equals(Fruit))
+            {
+                EatFruit();
+                SortFruit();
+            }
+
             return true;
         }
 
@@ -71,6 +74,21 @@ namespace server
                 n = max;
             else if (n > max)
                 n = min;
+        }
+
+        Random r = new Random();
+        private void SortFruit()
+        {
+            int x = r.Next(0, Form1.ColCount),
+                y = r.Next(0, Form1.RowCount);
+
+            Fruit = new Point(x, y);
+        }
+
+        public void EatFruit()
+        {
+            Point last = Tail[Tail.Count - 1];
+            Tail.Add(new Point(last.X, last.Y));
         }
     }
 }

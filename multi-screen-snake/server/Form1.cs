@@ -79,6 +79,15 @@ namespace server
             RowCount = 9 * (clientList.Count + 1);
 
             snake = new Snake(0, 1, Screen.PrimaryScreen.Bounds.Width / 16, Screen.PrimaryScreen.Bounds.Height / 9);
+            snake.EatFruit();
+            snake.EatFruit();
+            snake.EatFruit();
+            snake.EatFruit();
+            snake.EatFruit();
+            snake.EatFruit();
+            snake.EatFruit();
+            snake.EatFruit();
+
             this.Controls.Remove(this.pnlConnect);
             this.FormBorderStyle = FormBorderStyle.None;
             this.Bounds = new Rectangle(0, 0, Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
@@ -98,12 +107,12 @@ namespace server
         {
             g.Clear(this.TransparencyKey);
             foreach (ConnectedComputer c in clientList)
-            {
-                StreamWriter w = c.ClientWriter;
-                w.WriteLine("CLEAR");
-                w.Flush();
-            }
+                c.ClientWriter.WriteLine("CLEAR");
 
+
+            ///////////////
+            // HEAD DRAW //
+            ///////////////
             int client = (int)(snake.Head.X / 16f) - 1;
             if (client < 0)
                 g.FillRectangle(Brushes.Black, new Rectangle(snake.Head.X * snake.Scale.Width, snake.Head.Y * snake.Scale.Height, snake.Scale.Width, snake.Scale.Height));
@@ -113,22 +122,51 @@ namespace server
                 client++;
 
                 writer.WriteLine((snake.Head.X - client * 16) * snake.Scale.Width + ", " + snake.Head.Y * snake.Scale.Height + ", " + snake.Scale.Width + ", " + snake.Scale.Height);
-                writer.Flush();
             }
 
+
+            ///////////////
+            // TAIL DRAW //
+            ///////////////
+            client = -1;
             foreach (Point p in snake.Tail)
             {
-                client = (int)(p.X / 16f) - 1;
-                if (client < 0)
+                int newClient = (int)(p.X / 16f) - 1;
+                if (newClient < 0)
                     g.FillRectangle(Brushes.Black, new Rectangle(p.X * snake.Scale.Width, p.Y * snake.Scale.Height, snake.Scale.Width, snake.Scale.Height));
                 else
                 {
-                    StreamWriter writer = clientList[client].ClientWriter;
-                    client++;
+                    StreamWriter writer = clientList[newClient].ClientWriter;
+                    if (newClient != client)
+                    {
+                        if (client >= 0)
+                            clientList[client].ClientWriter.WriteLine("END");
 
-                    writer.WriteLine((p.X - client * 16) * snake.Scale.Width + ", " + p.Y * snake.Scale.Height + ", " + snake.Scale.Width + ", " + snake.Scale.Height);
-                    writer.Flush();
+                        client = newClient;
+                        writer.WriteLine("BODY");
+                    }
+
+                    writer.WriteLine((p.X - (client + 1) * 16) * snake.Scale.Width + ", " + p.Y * snake.Scale.Height + ", " + snake.Scale.Width + ", " + snake.Scale.Height);
                 }
+            }
+
+            if (client >= 0)
+                clientList[client].ClientWriter.WriteLine("END");
+
+
+            ////////////////
+            // FRUIT DRAW //
+            ////////////////
+            client = (int)(snake.Fruit.X / 16f) - 1;
+            if (client < 0)
+                g.FillRectangle(Brushes.Red, new Rectangle(snake.Fruit.X * snake.Scale.Width, snake.Fruit.Y * snake.Scale.Height, snake.Scale.Width, snake.Scale.Height));
+            else
+            {
+                StreamWriter writer = clientList[client].ClientWriter;
+                client++;
+
+                writer.WriteLine("FRUIT");
+                writer.WriteLine((snake.Fruit.X - client * 16) * snake.Scale.Width + ", " + snake.Fruit.Y * snake.Scale.Height + ", " + snake.Scale.Width + ", " + snake.Scale.Height);
             }
 
             snake.Update(xDirection.Right, yDirection.None);
@@ -154,6 +192,7 @@ namespace server
             this.IP = ((IPEndPoint)c.Client.RemoteEndPoint).Address;
             this.Client = c;
             this.ClientWriter = new StreamWriter(c.GetStream());
+            this.ClientWriter.AutoFlush = true;
             this.ClientGraphics = g;
         }
     }
