@@ -84,6 +84,7 @@
             this.ClientSize = new System.Drawing.Size(219, 295);
             this.Controls.Add(this.pnlConnect);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.KeyPreview = true;
             this.Name = "Form1";
             this.pnlConnect.ResumeLayout(false);
             this.pnlConnect.PerformLayout();

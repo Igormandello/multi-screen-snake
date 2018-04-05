@@ -26,6 +26,9 @@ namespace server
         Graphics g;
         Snake snake;
 
+        yDirection yDir = yDirection.None;
+        xDirection xDir = xDirection.Right;
+
         public Form1()
         {
             InitializeComponent();
@@ -88,6 +91,7 @@ namespace server
             snake.EatFruit();
             snake.EatFruit();
 
+            this.KeyDown += ChangeDirection;
             this.Controls.Remove(this.pnlConnect);
             this.FormBorderStyle = FormBorderStyle.None;
             this.Bounds = new Rectangle(0, 0, Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
@@ -101,6 +105,17 @@ namespace server
             t.Interval = 250;
             t.Tick += (object o, EventArgs ev) => Frame();
             t.Start();
+        }
+
+        private void ChangeDirection(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Right: xDir = xDirection.Right; yDir = yDirection.None; break;
+                case Keys.Left:  xDir = xDirection.Left;  yDir = yDirection.None; break;
+                case Keys.Up:    xDir = xDirection.None;  yDir = yDirection.Up;   break;
+                case Keys.Down:  xDir = xDirection.None;  yDir = yDirection.Down; break;
+            }
         }
 
         private void Frame()
@@ -169,7 +184,7 @@ namespace server
                 writer.WriteLine((snake.Fruit.X - client * 16) * snake.Scale.Width + ", " + snake.Fruit.Y * snake.Scale.Height + ", " + snake.Scale.Width + ", " + snake.Scale.Height);
             }
 
-            snake.Update(xDirection.Right, yDirection.None);
+            snake.Update(xDir, yDir);
         }
 
         private int ClientCompare(ConnectedComputer c1, ConnectedComputer c2)
