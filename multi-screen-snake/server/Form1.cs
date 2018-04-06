@@ -101,7 +101,7 @@ namespace server
             Frame();
 
             Timer t = new Timer();
-            t.Interval = 100;
+            t.Interval = 75;
             t.Tick += (object o, EventArgs ev) => Frame();
             t.Start();
         }
@@ -120,8 +120,10 @@ namespace server
         private void Frame()
         {
             g.Clear(this.TransparencyKey);
-            foreach (ConnectedComputer c in clientList)
-                c.ClientWriter.WriteLine("CLEAR");
+
+            List<String> tempStreams = new List<String>();
+            for (int n = 0; n < clientList.Count; n++)
+                tempStreams.Add("");
 
 
             ///////////////
@@ -131,12 +133,7 @@ namespace server
             if (client < 0)
                 g.FillRectangle(Brushes.Black, new Rectangle(snake.Head.X * snake.Scale.Width, snake.Head.Y * snake.Scale.Height, snake.Scale.Width, snake.Scale.Height));
             else
-            {
-                StreamWriter writer = clientList[client].ClientWriter;
-                client++;
-
-                writer.WriteLine((snake.Head.X - client * 16) * snake.Scale.Width + ", " + snake.Head.Y * snake.Scale.Height + ", " + snake.Scale.Width + ", " + snake.Scale.Height);
-            }
+                tempStreams[client] += (snake.Head.X - (client + 1) * 16) * snake.Scale.Width + "," + snake.Head.Y * snake.Scale.Height + "," + snake.Scale.Width + "," + snake.Scale.Height + "-";
 
 
             ///////////////
@@ -152,20 +149,11 @@ namespace server
                 {
                     StreamWriter writer = clientList[newClient].ClientWriter;
                     if (newClient != client)
-                    {
-                        if (client >= 0)
-                            clientList[client].ClientWriter.WriteLine("END");
-
                         client = newClient;
-                        writer.WriteLine("BODY");
-                    }
 
-                    writer.WriteLine((p.X - (client + 1) * 16) * snake.Scale.Width + ", " + p.Y * snake.Scale.Height + ", " + snake.Scale.Width + ", " + snake.Scale.Height);
+                    tempStreams[client] += (p.X - (client + 1) * 16) * snake.Scale.Width + "," + p.Y * snake.Scale.Height + "," + snake.Scale.Width + "," + snake.Scale.Height + "-";
                 }
             }
-
-            if (client >= 0)
-                clientList[client].ClientWriter.WriteLine("END");
 
 
             ////////////////
@@ -175,13 +163,11 @@ namespace server
             if (client < 0)
                 g.FillRectangle(Brushes.Red, new Rectangle(snake.Fruit.X * snake.Scale.Width, snake.Fruit.Y * snake.Scale.Height, snake.Scale.Width, snake.Scale.Height));
             else
-            {
-                StreamWriter writer = clientList[client].ClientWriter;
-                client++;
+                tempStreams[client] += ";" + ((snake.Fruit.X - (client + 1) * 16) * snake.Scale.Width + "," + snake.Fruit.Y * snake.Scale.Height + "," + snake.Scale.Width + "," + snake.Scale.Height);
 
-                writer.WriteLine("FRUIT");
-                writer.WriteLine((snake.Fruit.X - client * 16) * snake.Scale.Width + ", " + snake.Fruit.Y * snake.Scale.Height + ", " + snake.Scale.Width + ", " + snake.Scale.Height);
-            }
+
+            for (int n = 0; n < tempStreams.Count; n++)
+                clientList[n].ClientWriter.WriteLine(tempStreams[n]);
 
             snake.Update(xDir, yDir);
         }

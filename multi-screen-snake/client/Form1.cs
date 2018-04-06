@@ -68,44 +68,25 @@ namespace client
             while (connected)
             {
                 String message = reader.ReadLine();
-                if (message == "CLEAR")
-                {
-                    g.Clear(this.TransparencyKey);
-                    continue;
-                }
-                else if (message == "FRUIT")
-                {
-                    message = reader.ReadLine();
 
-                    String[] props = message.Split(',');
+                g.Clear(this.TransparencyKey);
+
+                String[] data = message.Split(';');
+                String[] rectStrings = data[0].Split(new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (String s in rectStrings)
+                {
+                    String[] props = s.Split(',');
+                    Rectangle r = new Rectangle(Convert.ToInt32(props[0]), Convert.ToInt32(props[1]), Convert.ToInt32(props[2]), Convert.ToInt32(props[3]));
+
+                    g.FillRectangle(Brushes.Black, r);
+                }
+
+                if (data.Length > 1)
+                {
+                    String[] props = data[1].Split(',');
                     Rectangle r = new Rectangle(Convert.ToInt32(props[0]), Convert.ToInt32(props[1]), Convert.ToInt32(props[2]), Convert.ToInt32(props[3]));
 
                     g.FillRectangle(Brushes.Red, r);
-                }
-                else if (message == "BODY")
-                {
-                    List<Rectangle> toDraw = new List<Rectangle>();
-
-                    message = reader.ReadLine();
-                    while (message != "END")
-                    {
-                        String[] props = message.Split(',');
-                        Rectangle r = new Rectangle(Convert.ToInt32(props[0]), Convert.ToInt32(props[1]), Convert.ToInt32(props[2]), Convert.ToInt32(props[3]));
-
-                        toDraw.Add(r);
-
-                        message = reader.ReadLine();
-                    }
-
-                    foreach (Rectangle r in toDraw)
-                        g.FillRectangle(Brushes.Black, r);
-                }
-                else
-                {
-                    String[] props = message.Split(',');
-                    Rectangle r = new Rectangle(Convert.ToInt32(props[0]), Convert.ToInt32(props[1]), Convert.ToInt32(props[2]), Convert.ToInt32(props[3]));;
-
-                    g.FillRectangle(Brushes.Black, r);
                 }
             }
         }
