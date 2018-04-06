@@ -33,7 +33,7 @@ namespace client
             try
             {
                 TcpClient client = new TcpClient();
-                client.Connect(IPAddress.Parse("177.220.18.65"), 1337);
+                client.Connect(IPAddress.Parse(tbServer.Text), 1337);
 
                 StreamWriter writer = new StreamWriter(client.GetStream());
                 reader = new StreamReader(client.GetStream());
@@ -99,6 +99,13 @@ namespace client
 
                     foreach (Rectangle r in toDraw)
                         g.FillRectangle(Brushes.Black, r);
+                }
+                else
+                {
+                    String[] props = message.Split(',');
+                    Rectangle r = new Rectangle(Convert.ToInt32(props[0]), Convert.ToInt32(props[1]), Convert.ToInt32(props[2]), Convert.ToInt32(props[3]));;
+
+                    g.FillRectangle(Brushes.Black, r);
                 }
             }
         }

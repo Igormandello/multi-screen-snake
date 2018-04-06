@@ -79,7 +79,6 @@ namespace server
             clientList.Sort(ClientCompare);
 
             ColCount = 16 * (clientList.Count + 1);
-            RowCount = 9 * (clientList.Count + 1);
 
             snake = new Snake(0, 1, Screen.PrimaryScreen.Bounds.Width / 16, Screen.PrimaryScreen.Bounds.Height / 9);
             snake.EatFruit();
@@ -102,7 +101,7 @@ namespace server
             Frame();
 
             Timer t = new Timer();
-            t.Interval = 250;
+            t.Interval = 100;
             t.Tick += (object o, EventArgs ev) => Frame();
             t.Start();
         }
